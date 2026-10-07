@@ -52,3 +52,65 @@ def list_tasks() -> list[dict]:
             }
             for task in tasks
         ]
+
+
+from typing import Literal
+from fastapi import HTTPException
+
+
+class TaskStatusUpdate(BaseModel):
+    status: Literal["todo", "in_progress", "done"]
+
+
+@router.patch("/{task_id}")
+def update_task_status(task_id: int, payload: TaskStatusUpdate) -> dict:
+    with Session(engine) as session:
+        task = session.get(Task, task_id)
+
+        if task is None:
+            raise HTTPException(status_code=404, detail="Task not found")
+
+        task.status = payload.status
+        session.commit()
+        session.refresh(task)
+
+        return {
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "status": task.status,
+        }
+
+
+from fastapi import Response
+
+
+@router.delete("/{task_id}", status_code=204)
+def delete_task(task_id: int) -> Response:
+    with Session(engine) as session:
+        task = session.get(Task, task_id)
+
+        if task is None:
+            raise HTTPException(status_code=404, detail="Task not found")
+
+        session.delete(task)
+        session.commit()
+
+        return Response(status_code=204)
+
+
+from fastapi import Response
+
+
+@router.delete("/{task_id}", status_code=204)
+def delete_task(task_id: int) -> Response:
+    with Session(engine) as session:
+        task = session.get(Task, task_id)
+
+        if task is None:
+            raise HTTPException(status_code=404, detail="Task not found")
+
+        session.delete(task)
+        session.commit()
+
+        return Response(status_code=204)
