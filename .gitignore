@@ -1,0 +1,13 @@
+
+# Python-generated files
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local credentials
+.env
+.env.*
+
+# Editor backup files
+*.bak
