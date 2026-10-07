@@ -33,3 +33,7 @@ def readiness() -> JSONResponse:
         status_code=200,
         content={"status": "ready", "database": "connected"},
     )
+
+from app.tasks import router as tasks_router
+
+app.include_router(tasks_router)
